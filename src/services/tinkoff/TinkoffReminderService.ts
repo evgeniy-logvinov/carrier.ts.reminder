@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { MarketInstrument } from '@tinkoff/invest-openapi-js-sdk';
-import { DataContainerService } from '../DataContainerService';
+import { DataContainerService, TickerInfo } from '../DataContainerService';
 import { ReminderService } from '../ReminderService';
 import { StockService } from '../StockService';
 import { TinkoffStockService } from './TinkoffStockService';
@@ -26,7 +25,7 @@ export class TinkoffReminderService extends ReminderService {
   dataContainer: DataContainerService;
   stock: StockService;
 
-  constructor(ticker: string) {
+  constructor(ticker: TickerInfo) {
     super(ticker);
     this.dataContainer = new DataContainerService();
     this.stock = new TinkoffStockService();

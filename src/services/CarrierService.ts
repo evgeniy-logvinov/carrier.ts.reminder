@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { DataContainerService } from './DataContainerService';
+import { DataContainerService, TickerInfo } from './DataContainerService';
 import { ReminderService } from './ReminderService';
 
 /**
@@ -26,9 +26,9 @@ export abstract class CarrierService {
    */
   start = async (): Promise<void> => {
     console.log('start');
-    const tickers = await this.getDataContainer().getTickers();
-    tickers?.forEach(ticker => {
-      const reminder = this.getReminder(ticker);
+    const tickersInfo = await this.getDataContainer().getTickers();
+    tickersInfo?.forEach(tickerInfo => {
+      const reminder = this.getReminder(tickerInfo);
       reminder.startWatching();
     });
   }
@@ -37,7 +37,7 @@ export abstract class CarrierService {
    * Get reminder implementation
    * @param ticker - ticker name
    */
-  abstract getReminder(ticker: string): ReminderService;
+  abstract getReminder(ticker: TickerInfo): ReminderService;
 
   /**
    * Get data container implementation

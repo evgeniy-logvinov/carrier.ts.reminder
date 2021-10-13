@@ -16,16 +16,21 @@
 /**
  * Data container will get ticker information from  the database
  */
+export interface TickerInfo {
+  ticker: string;
+  sellPrice: number;
+  buyPrice: number;
+}
 export class DataContainerService {
 
   /**
    * @description Get all tickers which need to be watched
    * @returns void
    */
-  getTickers = async (): Promise<string[]> => {
+  getTickers = async (): Promise<TickerInfo[]> => {
     return [
-      'AAPL',
-      'BAC',
+      {ticker: 'AAPL', buyPrice: 100, sellPrice: 200},
+      {ticker: 'BAC', buyPrice: 20, sellPrice: 30},
     ];
   }
 }

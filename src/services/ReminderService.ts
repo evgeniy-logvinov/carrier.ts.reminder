@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { TickerInfo } from './DataContainerService';
 import { FatherService } from './FatherService';
 import { StockService } from './StockService';
 
@@ -23,13 +24,13 @@ import { StockService } from './StockService';
 export abstract class ReminderService extends FatherService {
   timerId?: NodeJS.Timeout;
   timeout: number = 2000;
-  ticker: string;
+  tickerInfo: TickerInfo;
 
   abstract getStock(): StockService;
 
-  constructor(ticker: string) {
+  constructor(tickerInfo: TickerInfo) {
     super();
-    this.ticker = ticker;
+    this.tickerInfo = tickerInfo;
   }
 
   /**
@@ -38,7 +39,7 @@ export abstract class ReminderService extends FatherService {
    */
   startWatching = async (): Promise<void> => {
     try {
-      console.log(this.ticker, await this.getStock().getPrice(this.ticker));
+      console.log(this.tickerInfo, await this.getStock().getPrice(this.tickerInfo.ticker));
     } catch (err) {
       console.log(err);
       this.error(err as Error);
@@ -48,6 +49,6 @@ export abstract class ReminderService extends FatherService {
   }
 
   getTicker(): string {
-    return this.ticker;
+    return this.tickerInfo.ticker;
   }
 }

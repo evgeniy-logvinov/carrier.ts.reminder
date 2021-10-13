@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 import { CarrierService } from '../CarrierService';
-import { DataContainerService } from '../DataContainerService';
+import { DataContainerService, TickerInfo } from '../DataContainerService';
 import { TinkoffReminderService } from './TinkoffReminderService';
 
 /**
  * Tinkoff carrier service realization.
  */
 export class TinkoffCarrierService extends CarrierService {
-  getReminder(ticker: string) {
+  getReminder(ticker: TickerInfo) {
     return new TinkoffReminderService(ticker);
   }
 

@@ -2,6 +2,7 @@
   "name": "carrier.ts.reminder",
   "version": "1.0.0",
   "description": "Node js reminder bot",
+  "keywords": ["Tinkoff", "Stock market"],
   "engines": {
     "node": ">=12.18.3"
   },

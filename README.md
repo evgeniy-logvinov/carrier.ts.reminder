@@ -1,2 +1,7 @@
 # carrier.ts.reminder
-Remind when some tickets goes down
+
+Remind when some tickets goes down or up.
+
+# .env file
+
+TOKEN=""

@@ -17,11 +17,16 @@
  * Service which helps to working with market and
  * get some information about tickers
  */
+
+interface Price {
+  sell: number;
+  buy: number;
+}
 export interface StockService {
 
   /**
    * @description Get price by ticker
    * @property {string} ticker - Ticker name
    */
-  getPrice(ticker: string): Promise<number>
+  getPrice(ticker: string): Promise<Price>
 }

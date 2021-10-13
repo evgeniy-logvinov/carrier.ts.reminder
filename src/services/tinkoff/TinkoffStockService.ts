@@ -13,13 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { MarketInstrument, OrderResponse } from '@tinkoff/invest-openapi-js-sdk';
 import { StockService } from '../StockService';
+import { TinkoffApiService } from './TinkoffApiService';
 
 /**
  * Tinkoff stock service implementation
  */
 export class TinkoffStockService implements StockService {
-  getPrice = async (ticker: string): Promise<number> => {
-    return ticker === 'AAPL' ? 11111 : 44444;
+  instrument: MarketInstrument | null = null;
+
+  fillMarketInstrument = async (ticker: string): Promise<void> => {
+    this.instrument = await TinkoffApiService.getInstance().searchOne({ ticker });
   }
+
+  getPrice = async (ticker: string): Promise<{sell: number, buy: number}> => {
+    if (!this.instrument)
+      await this.fillMarketInstrument(ticker);
+
+    if (this.instrument) {
+      const orderbook = await TinkoffApiService.getInstance().orderbookGet({figi: this.instrument.figi, depth: 1});
+      return {sell: orderbook.asks[0].price, buy: orderbook.bids[0].price};
+    } else {
+      throw new Error('Some problems with instrument');
+    }
+  }
+
+  getSumm(orders: OrderResponse[]) {
+    return orders.map(el => el.quantity).reduce((partial_sum, a) => partial_sum + a, 0);
+  }
+
 }

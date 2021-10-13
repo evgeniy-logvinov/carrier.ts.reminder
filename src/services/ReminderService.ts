@@ -23,7 +23,7 @@ import { StockService } from './StockService';
 export abstract class ReminderService extends FatherService {
   timerId?: NodeJS.Timeout;
   timeout: number = 2000;
-  ticker: string
+  ticker: string;
 
   abstract getStock(): StockService;
 

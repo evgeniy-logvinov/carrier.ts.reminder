@@ -25,7 +25,7 @@ export class DataContainerService {
   getTickers = async (): Promise<string[]> => {
     return [
       'AAPL',
-      'TEST',
+      'BAC',
     ];
   }
 }

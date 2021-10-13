@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { MarketInstrument } from '@tinkoff/invest-openapi-js-sdk';
 import { DataContainerService } from '../DataContainerService';
 import { ReminderService } from '../ReminderService';
 import { StockService } from '../StockService';

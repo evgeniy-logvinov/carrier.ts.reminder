@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { TickerInfo } from './DataContainerService';
+import { Range, TickerInfo } from './DataContainerService';
 import { FatherService } from './FatherService';
-import { StockService } from './StockService';
+import { RabbitMqPublisherService } from './RabbitMqPublisherService';
+import { Candle, Orderbook, StockService } from './StockService';
 
 /**
  * Server will check information about ticker.
@@ -23,7 +24,6 @@ import { StockService } from './StockService';
  */
 export abstract class ReminderService extends FatherService {
   timerId?: NodeJS.Timeout;
-  timeout: number = 2000;
   tickerInfo: TickerInfo;
 
   abstract getStock(): StockService;
@@ -39,13 +39,69 @@ export abstract class ReminderService extends FatherService {
    */
   startWatching = async (): Promise<void> => {
     try {
-      console.log(this.tickerInfo, await this.getStock().getPrice(this.tickerInfo.ticker));
+      this.orderbookWatcher();
+      // this.candleWatcher();
     } catch (err) {
       console.log(err);
       this.error(err as Error);
-    } finally {
-      this.timerId = setTimeout(this.startWatching, this.timeout);
+      this.startWatching();
     }
+  }
+
+  /**
+   * @description Method Watch changes using candle
+   */
+  candleWatcher = async (): Promise<void> => {
+    const candleCheck = (candle: Candle) => {
+      const checkedValuesBuy = this.tickerInfo.checkedValues;
+      checkedValuesBuy.sort((a, b) => a - b);
+      this.debug('candle', JSON.stringify(candle));
+    };
+    this.getStock().candle(this.tickerInfo.ticker, candleCheck);
+  }
+
+  /**
+   * @description Method Watch changes using orderbook
+   */
+  orderbookWatcher = async (): Promise<void> => {
+    const checkedValuesBuy = this.tickerInfo.checkedValues;
+    checkedValuesBuy.sort((a, b) => a - b);
+    const orderbookCheck = (orderbook: Orderbook) => {
+      this.checkValue(orderbook.bids[0][0], checkedValuesBuy);
+    };
+    this.getStock().orderbook(this.tickerInfo.ticker, orderbookCheck, 1);
+  }
+
+  /**
+   * @description Check value if it is need to send message or not. If range changed, than we need to send message
+   * @param value {number} - value which need to be checked
+   * @param valuesForCheck {number[]} - list of values which need to be checked
+   */
+  checkValue = (value: number, valuesForCheck: number[]): void => {
+    const range = this.getRange(value, valuesForCheck);
+    if (range.left !== this.tickerInfo.range.left || range.right !== this.tickerInfo.range.right) {
+      this.debug('value', value);
+      this.debug('previous range', JSON.stringify(this.tickerInfo.range));
+      this.debug('new range', JSON.stringify(range));
+      this.tickerInfo.range = range;
+      this.debug('send message');
+      RabbitMqPublisherService.sendMessageValueChanged(this.tickerInfo);
+    }
+  }
+
+  /**
+   * @description Get range between two numbers
+   * @param value {number} - checked value
+   * @param values {number[]} - array for check
+   * @returns {Range} - range contains left and right values in array where value contains
+   */
+  getRange = (value: number, values: number[]): Range => {
+    const index = values.findIndex(el => el > value);
+
+    if (index >= 0)
+      return {left: values[index - 1], right: values[index]};
+    else
+      return {left: values[values.length - 1], right: undefined};
   }
 
   getTicker(): string {

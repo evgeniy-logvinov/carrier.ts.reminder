@@ -2,7 +2,10 @@
   "name": "carrier.ts.reminder",
   "version": "1.0.0",
   "description": "Node js reminder bot",
-  "keywords": ["Tinkoff", "Stock market"],
+  "keywords": [
+    "Tinkoff",
+    "Stock market"
+  ],
   "engines": {
     "node": ">=12.18.3"
   },
@@ -11,9 +14,11 @@
     "@sentry/node": "^6.12.0",
     "@sentry/tracing": "^6.12.0",
     "@tinkoff/invest-openapi-js-sdk": "^1.2.16",
+    "amqplib": "^0.8.0",
     "dotenv": "^8.6.0",
     "express": "^4.17.1",
     "google-finance": "^0.1.12",
+    "jest": "^27.2.5",
     "moment": "^2.29.1",
     "quandl": "0.0.6",
     "telegraf": "^4.4.2",
@@ -22,14 +27,16 @@
     "winston-sentry-log": "^1.0.22"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.8.2",
     "@types/express": "^4.16.0",
+    "@types/jest": "^27.0.2",
     "@types/node": "^14.17.16",
     "@typescript-eslint/eslint-plugin": "^4.0.1",
     "@typescript-eslint/parser": "^4.0.1",
     "eslint": "^7.8.1",
     "eslint-plugin-notice": "^0.9.10",
     "nodemon": "^1.18.3",
-    "ts-jest": "^26.3.0",
+    "ts-jest": "^27.0.0-next.12",
     "ts-node": "^10.2.1",
     "tslib": "^2.3.1",
     "typescript": "^3.0.1"
@@ -38,7 +45,7 @@
     "eslint": "[ \"$CI\" = true ] && eslint --quiet -f codeframe --ext js,ts . || eslint --ext js,ts .",
     "eslint:fix": "[ \"$CI\" = true ] && eslint --quiet -f codeframe --ext js,ts . --fix || eslint --ext js,ts . --fix",
     "lint": "npm run eslint && npm run tsc",
-    "test": "npm run lint && npm run test:api",
+    "test": "jest",
     "test:api": "jest --testPathPattern=test/",
     "start:prod": "NODE_ENV=production nodemon server.ts",
     "start:nodemon": "./node_modules/nodemon/bin/nodemon.js",

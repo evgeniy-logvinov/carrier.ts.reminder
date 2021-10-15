@@ -6,3 +6,5 @@ Remind when some tickets goes down or up.
 
 TOKEN=""
 SANDBOX_TOKEN=""
+RABBIT_MQ_URL=""
+CHANNEL_NAME=""

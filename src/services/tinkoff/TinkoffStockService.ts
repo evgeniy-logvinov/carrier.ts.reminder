@@ -13,14 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { MarketInstrument, OrderResponse } from '@tinkoff/invest-openapi-js-sdk';
-import { StockService } from '../StockService';
+import { CandleStreaming, MarketInstrument, OrderbookStreaming, OrderResponse } from '@tinkoff/invest-openapi-js-sdk';
+import { Depth, StockService } from '../StockService';
 import { TinkoffApiService } from './TinkoffApiService';
 
 /**
  * Tinkoff stock service implementation
  */
 export class TinkoffStockService implements StockService {
+
+  async candle(ticker: string, cb: (candle: CandleStreaming) => void): Promise<void> {
+    if (!this.instrument)
+      await this.fillMarketInstrument(ticker);
+
+    if (this.instrument) {
+      TinkoffApiService.getInstance().candle({ figi: this.instrument?.figi},
+          x => {
+            cb(x);
+          });
+    }
+  }
+
+  async orderbook(ticker: string, cb: (orderbook: OrderbookStreaming) => void, depth: Depth): Promise<void> {
+    if (!this.instrument)
+      await this.fillMarketInstrument(ticker);
+
+    if (this.instrument) {
+      // @ts-ignore
+      TinkoffApiService.getInstance().orderbook({ figi: this.instrument?.figi, depth},
+          x => {
+            cb(x);
+          });
+    }
+  }
+
   instrument: MarketInstrument | null = null;
 
   fillMarketInstrument = async (ticker: string): Promise<void> => {

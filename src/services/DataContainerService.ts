@@ -18,9 +18,15 @@
  */
 export interface TickerInfo {
   ticker: string;
-  sellPrice: number;
-  buyPrice: number;
+  checkedValues: number[];
+  range: Range;
 }
+
+export interface Range {
+  left?: number;
+  right?: number;
+}
+
 export class DataContainerService {
 
   /**
@@ -29,8 +35,21 @@ export class DataContainerService {
    */
   getTickers = async (): Promise<TickerInfo[]> => {
     return [
-      {ticker: 'AAPL', buyPrice: 100, sellPrice: 200},
-      {ticker: 'BAC', buyPrice: 20, sellPrice: 30},
+      {
+        ticker: 'BAC',
+        checkedValues: [100, 143.03, 145],
+        range: { left: undefined, right: undefined },
+      },
+      {
+        ticker: 'AAPL',
+        checkedValues: [100, 143.03, 145],
+        range: { left: 145, right: undefined },
+      },
+      {
+        ticker: 'TSLA',
+        checkedValues: [1, 817.16, 1000],
+        range: { left: 1, right: 817.16 },
+      },
     ];
   }
 }

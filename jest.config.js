@@ -13,17 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const fs = require('fs');
-
 module.exports = {
-  roots: ['<rootDir>/test'],
-  setupFiles: [returnIfExists('./jest.env.dev.js')].filter(t => !!t),
-  moduleFileExtensions: ['js', 'json', 'node'],
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  modulePathIgnorePatterns: ['<rootDir>/dist/'],
 };
-
-function returnIfExists(filePath) {
-  if (fs.existsSync(filePath))
-    return filePath;
-  else
-    return null;
-}

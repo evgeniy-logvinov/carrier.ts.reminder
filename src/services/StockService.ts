@@ -17,8 +17,22 @@
  * Service which helps to working with market and
  * get some information about tickers
  */
+export type Depth = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 20;
 
-interface Price {
+export interface Orderbook {
+  bids: Array<[number, number]>; // Buy
+  asks: Array<[number, number]>; // Sell
+}
+
+export interface Candle {
+  o: number; // Open price
+  c: number; // Close price
+  h: number; // Max price
+  l: number; // Min price
+  v: number; // Market Volume
+  time: string; // Time in RFC3339Nano
+}
+export interface Price {
   sell: number;
   buy: number;
 }
@@ -27,6 +41,19 @@ export interface StockService {
   /**
    * @description Get price by ticker
    * @property {string} ticker - Ticker name
+   * @deprecated
    */
   getPrice(ticker: string): Promise<Price>
+
+  /**
+   * Candle subscribe
+   * @param {string} ticker - ticker name
+   */
+  candle(ticker: string, cb: (orderbook: Candle) => void): void;
+
+  /**
+   * Orderbook subscribe
+   * @param {string} ticker - ticker name
+   */
+  orderbook(ticker: string, cb: (orderbook: Orderbook) => void, depth: Depth): void;
 }

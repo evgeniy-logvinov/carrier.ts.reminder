@@ -22,7 +22,7 @@ import moment from 'moment';
 const { combine, timestamp, printf } = format;
 
 const winstoneTransports: Transport[] = [];
-winstoneTransports.push(new transports.Console({level: 'warn'}));
+winstoneTransports.push(new transports.Console({level: 'debug'}));
 
 if (!!process.env.SENTRY_URL) {
   winstoneTransports.push(

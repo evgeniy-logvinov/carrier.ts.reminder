@@ -66,8 +66,8 @@ export abstract class ReminderService extends FatherService {
   orderbookWatcher = async (): Promise<void> => {
     const checkedValuesBuy = this.tickerInfo.checkedValues;
     checkedValuesBuy.sort((a, b) => a - b);
-    const orderbookCheck = (orderbook: Orderbook) => {
-      this.checkValue(orderbook.bids[0][0], checkedValuesBuy);
+    const orderbookCheck = async (orderbook: Orderbook) => {
+      await this.checkValue(orderbook.bids[0][0], checkedValuesBuy);
     };
     this.getStock().orderbook(this.tickerInfo.ticker, orderbookCheck, 1);
   }
@@ -77,7 +77,7 @@ export abstract class ReminderService extends FatherService {
    * @param value {number} - value which need to be checked
    * @param valuesForCheck {number[]} - list of values which need to be checked
    */
-  checkValue = (value: number, valuesForCheck: number[]): void => {
+  checkValue = async (value: number, valuesForCheck: number[]): Promise<void> => {
     const range = this.getRange(value, valuesForCheck);
     if (range.left !== this.tickerInfo.range.left || range.right !== this.tickerInfo.range.right) {
       this.debug('value', value);
@@ -85,7 +85,7 @@ export abstract class ReminderService extends FatherService {
       this.debug('new range', JSON.stringify(range));
       this.tickerInfo.range = range;
       this.debug('send message');
-      RabbitMqPublisherService.sendMessageValueChanged(this.tickerInfo);
+      await RabbitMqPublisherService.sendMessageValueChanged(this.tickerInfo);
     }
   }
 

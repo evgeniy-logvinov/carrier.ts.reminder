@@ -41,12 +41,24 @@ export class RabbitMqPublisherService {
     return RabbitMqPublisherService.connection;
   }
 
+  static async getChannel() {
+    // if (!RabbitMqPublisherService.channel)
+    RabbitMqPublisherService.channel = await RabbitMqPublisherService.createChannel();
+
+
+    return RabbitMqPublisherService.channel;
+  }
+
   static closeConnection = () => {
     RabbitMqPublisherService.connection.close();
   }
 
   static closeChannel = () => {
     RabbitMqPublisherService.channel.close();
+  }
+
+  static createChannel = async () => {
+    return (await RabbitMqPublisherService.getInstance()).createChannel();
   }
 
   static sendMessageValueChanged = async (message: ValueChangedMessage) => {
@@ -58,7 +70,7 @@ export class RabbitMqPublisherService {
   }
 
   static async sendMessage(message: string) {
-    const exchange = 'mainexchange';
+    const exchange = 'main';
     const channelName = process.env.CHANNEL_NAME;
     if (channelName) {
       const telegramMessage: TelegramMessage = {
@@ -66,7 +78,9 @@ export class RabbitMqPublisherService {
         topic: 'Value changed',
         message,
       };
-      const channel = await (await RabbitMqPublisherService.getInstance()).createChannel();
+      const channel = await RabbitMqPublisherService.getChannel();
+      // console.log('channel', channel);
+      await this.channel.assertQueue('generateRoutingKey', {durable: true});
       channel.publish(exchange, 'generateRoutingKey', Buffer.from(JSON.stringify(JSON.parse(JSON.stringify(telegramMessage)))));
     }
   }
